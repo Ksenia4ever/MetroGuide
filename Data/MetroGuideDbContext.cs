@@ -11,24 +11,157 @@ namespace MetroGuide.Data
         {
         }
 
+        // Пользователи
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<UserTour> UserTours { get; set; }
+        public DbSet<FavoriteTour> FavoriteTours { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+
+        // Метро
         public DbSet<MetroLine> MetroLines { get; set; }
         public DbSet<MetroStation> MetroStations { get; set; }
 
+        // Памятки
         public DbSet<Attraction> Attractions { get; set; }
         public DbSet<StationAttraction> StationAttractions { get; set; }
         public DbSet<AttractionMedia> AttractionMedia { get; set; }
 
+        // Экскурсии
         public DbSet<Tour> Tours { get; set; }
         public DbSet<TourStop> TourStops { get; set; }
-
         public DbSet<TourTheme> TourThemes { get; set; }
         public DbSet<TourThemeLink> TourThemeLinks { get; set; }
-
         public DbSet<TourStopAttraction> TourStopAttractions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // =========================================================
+            // Account
+            // =========================================================
+
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.FullName)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(x => x.Email)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.HasIndex(x => x.Email)
+                    .IsUnique();
+
+                entity.HasIndex(x => x.IdentityUserId)
+                    .IsUnique();
+
+                entity.HasOne(x => x.IdentityUser)
+                    .WithOne(x => x.Account)
+                    .HasForeignKey<Account>(x => x.IdentityUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            // =========================================================
+            // UserTour
+            // История / текущее прохождение экскурсии
+            // =========================================================
+
+            modelBuilder.Entity<UserTour>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Status)
+                    .IsRequired()
+                    .HasMaxLength(30);
+
+                entity.HasIndex(x => new
+                {
+                    x.AccountId,
+                    x.TourId
+                });
+
+                entity.HasOne(x => x.Account)
+                    .WithMany(x => x.UserTours)
+                    .HasForeignKey(x => x.AccountId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.Tour)
+                    .WithMany(x => x.UserTours)
+                    .HasForeignKey(x => x.TourId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.CurrentTourStop)
+                    .WithMany()
+                    .HasForeignKey(x => x.CurrentTourStopId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+
+            // =========================================================
+            // FavoriteTour
+            // =========================================================
+
+            modelBuilder.Entity<FavoriteTour>(entity =>
+            {
+                entity.HasKey(x => new
+                {
+                    x.AccountId,
+                    x.TourId
+                });
+
+                entity.HasOne(x => x.Account)
+                    .WithMany(x => x.FavoriteTours)
+                    .HasForeignKey(x => x.AccountId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.Tour)
+                    .WithMany(x => x.FavoriteTours)
+                    .HasForeignKey(x => x.TourId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            // =========================================================
+            // Review
+            // =========================================================
+
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                // Один пользователь может оставить
+                // только один отзыв на одну экскурсию.
+                entity.HasIndex(x => new
+                {
+                    x.AccountId,
+                    x.TourId
+                })
+                .IsUnique();
+
+                // Оценка только от 1 до 5.
+                entity.ToTable(t =>
+                    t.HasCheckConstraint(
+                        "CK_Reviews_Rating",
+                        "\"Rating\" >= 1 AND \"Rating\" <= 5"
+                    ));
+
+                entity.HasOne(x => x.Account)
+                    .WithMany(x => x.Reviews)
+                    .HasForeignKey(x => x.AccountId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.Tour)
+                    .WithMany(x => x.Reviews)
+                    .HasForeignKey(x => x.TourId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             // =========================================================
             // MetroLine
@@ -50,6 +183,7 @@ namespace MetroGuide.Data
                     .IsUnique();
             });
 
+
             // =========================================================
             // MetroStation
             // =========================================================
@@ -68,6 +202,7 @@ namespace MetroGuide.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+
             // =========================================================
             // Attraction
             // =========================================================
@@ -85,6 +220,7 @@ namespace MetroGuide.Data
 
                 entity.Property(x => x.TextGuide);
             });
+
 
             // =========================================================
             // StationAttraction
@@ -110,6 +246,7 @@ namespace MetroGuide.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+
             // =========================================================
             // AttractionMedia
             // =========================================================
@@ -132,6 +269,7 @@ namespace MetroGuide.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+
             // =========================================================
             // Tour
             // =========================================================
@@ -148,6 +286,7 @@ namespace MetroGuide.Data
                     .IsRequired();
             });
 
+
             // =========================================================
             // TourStop
             // =========================================================
@@ -158,8 +297,6 @@ namespace MetroGuide.Data
 
                 entity.Property(x => x.GuideComment);
 
-                // В одной экскурсии не может быть
-                // двух остановок с одинаковым номером.
                 entity.HasIndex(x => new
                 {
                     x.TourId,
@@ -167,21 +304,17 @@ namespace MetroGuide.Data
                 })
                 .IsUnique();
 
-                // Если удаляем экскурсию,
-                // её остановки тоже удаляются.
                 entity.HasOne(x => x.Tour)
                     .WithMany(x => x.TourStops)
                     .HasForeignKey(x => x.TourId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                // Если удаляем станцию,
-                // все TourStop, которые использовали её как остановку,
-                // тоже удаляются.
                 entity.HasOne(x => x.MetroStation)
                     .WithMany(x => x.TourStops)
                     .HasForeignKey(x => x.MetroStationId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+
 
             // =========================================================
             // TourTheme
@@ -198,6 +331,7 @@ namespace MetroGuide.Data
                 entity.HasIndex(x => x.Name)
                     .IsUnique();
             });
+
 
             // =========================================================
             // TourThemeLink
@@ -222,6 +356,7 @@ namespace MetroGuide.Data
                     .HasForeignKey(x => x.TourThemeId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+
 
             // =========================================================
             // TourStopAttraction
