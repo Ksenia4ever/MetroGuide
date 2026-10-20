@@ -1,4 +1,4 @@
-﻿namespace MetroGuide.Models
+﻿namespace MetroGuide.Domain.Entities
 {
     public class UserTour
     {

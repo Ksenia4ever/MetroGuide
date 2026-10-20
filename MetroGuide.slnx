@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="MetroGuide.csproj" />
+  <Project Path="./Application/MetroGuide.Application.csproj" Id="997ffb56-3d69-4946-9c44-8420b536427e" />
+  <Project Path="./Domain/MetroGuide.Domain.csproj" Id="eff76e9b-e8d4-47c7-b8e9-b5d930ac0fc9" />
+  <Project Path="./Infrastructure/MetroGuide.Infrastructure.csproj" Id="84ed7496-a73a-44c8-abbb-4adeca0b7e7c" />
+  <Project Path="./Api/MetroGuide.Api.csproj" />
 </Solution>

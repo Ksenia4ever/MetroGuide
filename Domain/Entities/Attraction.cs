@@ -1,4 +1,4 @@
-﻿namespace MetroGuide.Models
+﻿namespace MetroGuide.Domain.Entities
 {
     public class Attraction
     {
@@ -9,7 +9,8 @@
         public string Description { get; set; } = string.Empty;
 
         public string? TextGuide { get; set; }
-
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public ICollection<StationAttraction> StationAttractions { get; set; } = new List<StationAttraction>();
 
         public ICollection<TourStopAttraction> TourStopAttractions { get; set; } = new List<TourStopAttraction>();

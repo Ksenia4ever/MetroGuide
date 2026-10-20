@@ -1,42 +1,70 @@
-﻿using MetroGuide.Models;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MetroGuide.Domain.Entities;
+using MetroGuide.Infrastructure.Identity;
 
-namespace MetroGuide.Data
+namespace MetroGuide.Infrastructure.Data
 {
     public class MetroGuideDbContext : IdentityDbContext<ApplicationUser>
     {
-        public MetroGuideDbContext(DbContextOptions<MetroGuideDbContext> options)
+        public MetroGuideDbContext(
+            DbContextOptions<MetroGuideDbContext> options)
             : base(options)
         {
         }
 
-        // Пользователи
+        // =========================================================
+        // Users
+        // =========================================================
+
         public DbSet<Account> Accounts { get; set; }
+
         public DbSet<UserTour> UserTours { get; set; }
+
         public DbSet<FavoriteTour> FavoriteTours { get; set; }
+
         public DbSet<Review> Reviews { get; set; }
 
-        // Метро
+
+        // =========================================================
+        // Metro
+        // =========================================================
+
         public DbSet<MetroLine> MetroLines { get; set; }
+
         public DbSet<MetroStation> MetroStations { get; set; }
 
-        // Памятки
+
+        // =========================================================
+        // Attractions
+        // =========================================================
+
         public DbSet<Attraction> Attractions { get; set; }
+
         public DbSet<StationAttraction> StationAttractions { get; set; }
+
         public DbSet<AttractionMedia> AttractionMedia { get; set; }
 
-        // Экскурсии
+
+        // =========================================================
+        // Tours
+        // =========================================================
+
         public DbSet<Tour> Tours { get; set; }
+
         public DbSet<TourStop> TourStops { get; set; }
+
         public DbSet<TourTheme> TourThemes { get; set; }
+
         public DbSet<TourThemeLink> TourThemeLinks { get; set; }
+
         public DbSet<TourStopAttraction> TourStopAttractions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
 
             // =========================================================
             // Account
@@ -60,7 +88,7 @@ namespace MetroGuide.Data
                 entity.HasIndex(x => x.IdentityUserId)
                     .IsUnique();
 
-                entity.HasOne(x => x.IdentityUser)
+                entity.HasOne<ApplicationUser>()
                     .WithOne(x => x.Account)
                     .HasForeignKey<Account>(x => x.IdentityUserId)
                     .OnDelete(DeleteBehavior.Cascade);
@@ -69,7 +97,6 @@ namespace MetroGuide.Data
 
             // =========================================================
             // UserTour
-            // История / текущее прохождение экскурсии
             // =========================================================
 
             modelBuilder.Entity<UserTour>(entity =>
@@ -135,8 +162,6 @@ namespace MetroGuide.Data
             {
                 entity.HasKey(x => x.Id);
 
-                // Один пользователь может оставить
-                // только один отзыв на одну экскурсию.
                 entity.HasIndex(x => new
                 {
                     x.AccountId,
@@ -144,7 +169,6 @@ namespace MetroGuide.Data
                 })
                 .IsUnique();
 
-                // Оценка только от 1 до 5.
                 entity.ToTable(t =>
                     t.HasCheckConstraint(
                         "CK_Reviews_Rating",
@@ -224,7 +248,6 @@ namespace MetroGuide.Data
 
             // =========================================================
             // StationAttraction
-            // MetroStation M:N Attraction
             // =========================================================
 
             modelBuilder.Entity<StationAttraction>(entity =>
@@ -295,8 +318,6 @@ namespace MetroGuide.Data
             {
                 entity.HasKey(x => x.Id);
 
-                entity.Property(x => x.GuideComment);
-
                 entity.HasIndex(x => new
                 {
                     x.TourId,
@@ -335,7 +356,6 @@ namespace MetroGuide.Data
 
             // =========================================================
             // TourThemeLink
-            // Tour M:N TourTheme
             // =========================================================
 
             modelBuilder.Entity<TourThemeLink>(entity =>
@@ -360,7 +380,6 @@ namespace MetroGuide.Data
 
             // =========================================================
             // TourStopAttraction
-            // TourStop M:N Attraction
             // =========================================================
 
             modelBuilder.Entity<TourStopAttraction>(entity =>

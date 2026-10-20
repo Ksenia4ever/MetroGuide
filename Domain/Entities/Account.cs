@@ -1,4 +1,4 @@
-﻿namespace MetroGuide.Models
+﻿namespace MetroGuide.Domain.Entities
 {
     public class Account
     {
@@ -10,7 +10,6 @@
 
         public string IdentityUserId { get; set; } = string.Empty;
 
-        public ApplicationUser IdentityUser { get; set; } = null!;
         public ICollection<UserTour> UserTours { get; set; } = new List<UserTour>();
 
         public ICollection<FavoriteTour> FavoriteTours { get; set; } = new List<FavoriteTour>();
@@ -18,3 +17,6 @@
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }
+
+
+

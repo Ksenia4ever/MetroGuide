@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MetroGuide.Domain.Entities;
 
-namespace MetroGuide.Models
+namespace MetroGuide.Infrastructure.Identity
 {
     public class ApplicationUser : IdentityUser
     {
