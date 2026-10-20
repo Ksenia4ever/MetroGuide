@@ -52,7 +52,7 @@ namespace MetroGuide.Infrastructure.Migrations
                     b.HasIndex("IdentityUserId")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.Attraction", b =>
@@ -83,7 +83,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Attractions");
+                    b.ToTable("Attractions", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.AttractionMedia", b =>
@@ -111,7 +111,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("AttractionId");
 
-                    b.ToTable("AttractionMedia");
+                    b.ToTable("AttractionMedia", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.FavoriteTour", b =>
@@ -126,7 +126,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("FavoriteTours");
+                    b.ToTable("FavoriteTours", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.MetroLine", b =>
@@ -155,7 +155,7 @@ namespace MetroGuide.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MetroLines");
+                    b.ToTable("MetroLines", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.MetroStation", b =>
@@ -184,7 +184,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("MetroLineId");
 
-                    b.ToTable("MetroStations");
+                    b.ToTable("MetroStations", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.Review", b =>
@@ -217,7 +217,7 @@ namespace MetroGuide.Infrastructure.Migrations
                     b.HasIndex("AccountId", "TourId")
                         .IsUnique();
 
-                    b.ToTable("Reviews", t =>
+                    b.ToTable("Reviews", null, t =>
                         {
                             t.HasCheckConstraint("CK_Reviews_Rating", "\"Rating\" >= 1 AND \"Rating\" <= 5");
                         });
@@ -241,7 +241,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("AttractionId");
 
-                    b.ToTable("StationAttractions");
+                    b.ToTable("StationAttractions", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.Tour", b =>
@@ -266,7 +266,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tours");
+                    b.ToTable("Tours", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.TourStop", b =>
@@ -296,7 +296,7 @@ namespace MetroGuide.Infrastructure.Migrations
                     b.HasIndex("TourId", "StopOrder")
                         .IsUnique();
 
-                    b.ToTable("TourStops");
+                    b.ToTable("TourStops", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.TourStopAttraction", b =>
@@ -311,7 +311,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("AttractionId");
 
-                    b.ToTable("TourStopAttractions");
+                    b.ToTable("TourStopAttractions", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.TourTheme", b =>
@@ -332,7 +332,7 @@ namespace MetroGuide.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("TourThemes");
+                    b.ToTable("TourThemes", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.TourThemeLink", b =>
@@ -347,7 +347,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("TourThemeId");
 
-                    b.ToTable("TourThemeLinks");
+                    b.ToTable("TourThemeLinks", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Domain.Entities.UserTour", b =>
@@ -386,7 +386,7 @@ namespace MetroGuide.Infrastructure.Migrations
 
                     b.HasIndex("AccountId", "TourId");
 
-                    b.ToTable("UserTours");
+                    b.ToTable("UserTours", (string)null);
                 });
 
             modelBuilder.Entity("MetroGuide.Infrastructure.Identity.ApplicationUser", b =>
